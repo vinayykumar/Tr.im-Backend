@@ -10,7 +10,7 @@ router.post("/shorten", authenticateToken, async (req, res) => {
 
         // Generate a simple random short ID
         const shortID = Math.random().toString(36).substring(2, 8);
-
+        
         // Set expiry dynamically: either provided TTL or default 24 hours
         const expiresAt = ttl 
             ? new Date(Date.now() + ttl * 60 * 60 * 1000)
@@ -31,6 +31,7 @@ router.post("/shorten", authenticateToken, async (req, res) => {
     }
 });
 
+//Public route : get Redirected/Original URL
 router.get('/:shortID', async (req,res)=> {
     try{
         const {shortID} = req.params;
@@ -54,5 +55,26 @@ router.get('/:shortID', async (req,res)=> {
         res.status(500).json({error : "Could not redirect"})
     }
 });
+
+//Protected route : get all urls of current user with userID
+router.get('/my-urls', authenticateToken, async (req,res) => {
+    try{
+        const urls = await URL.find({userID : req.params.id}).lean();
+
+        const data = urls.map((url) => ({
+            shortID: url.shortID,
+            redirectedURL: url.redirectedURL,
+            createdAt: url.createdAt,
+            expiresAt: url.expiresAt,
+            totalClicks: url.visitHistory.length,
+            visits: url.visitHistory   // full visit details
+        }));
+
+        return res.json(data)
+    }
+    catch(err){
+        return res.status(500).json({ error: "Could not fetch URLs" });
+    }
+})
 
 module.exports = router;
