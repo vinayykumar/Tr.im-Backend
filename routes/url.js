@@ -2,9 +2,11 @@ const express = require("express");
 const router = express.Router();
 const authenticateToken = require("../middleware/auth");
 const URL = require("../models/url");
+const {shortenLimiter} = require('../middlewares/ratelimiter')
+
 
 // Protected route: create a short URL
-router.post("/shorten", authenticateToken, async (req, res) => {
+router.post("/shorten", shortenLimiter, authenticateToken, async (req, res) => {
     try {
         const { redirectedURL, ttl } = req.body; // optional TTL in hours
 
