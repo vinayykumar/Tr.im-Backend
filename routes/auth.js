@@ -4,8 +4,13 @@ const User = require("../models/user");
 const { generateAccessToken, generateRefreshToken } = require("../utils/jwt");
 const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = process.env;
 const router = express.Router();
+const { signupSchema, loginSchema } = require("../middlewares/validators");
+
 
 router.post("/signup", async (req, res) => {
+    const { error } = signupSchema.validate(req.body);
+    if (error) return res.status(400).json({ error: error.details[0].message });
+
     try {
         const { username, email, password } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -28,6 +33,8 @@ router.post("/signup", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
+    const { error } = loginSchema.validate(req.body);
+    if (error) return res.status(400).json({ error: error.details[0].message });
     try {
         const { email, password } = req.body;
 
