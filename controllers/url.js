@@ -50,7 +50,15 @@ async function handleGetShortUrlPrivate(req,res) {
         const { redirectedURL, ttl } = req.body; // optional TTL in hours
 
         // Generate a simple random short ID
-        const shortID = Math.random().toString(36).substring(2, 8);
+        let shortID;
+        let isDuplicate = true;
+        do{
+            shortID = Math.random().toString(36).substring(2, 8);
+            const existingURL = await URL.findOne({ shortID });
+            if (!existingURL) {
+                isDuplicate = false;
+            }
+        }while(isDuplicate);
         
         // Set expiry dynamically: either provided TTL or default 24 hours
         const expiresAt = ttl 
@@ -77,7 +85,15 @@ async function handleGetShortUrlPublic(req,res) {
         const { redirectedURL, ttl } = req.body; // optional TTL in hours
 
         // Generate a simple random short ID
-        const shortID = Math.random().toString(36).substring(2, 8);
+        let shortID;
+        let isDuplicate = true;
+        do{
+            shortID = Math.random().toString(36).substring(2, 8);
+            const existingURL = await URL.findOne({ shortID });
+            if (!existingURL) {
+                isDuplicate = false;
+            }
+        }while(isDuplicate);
         
         // Set expiry dynamically: either provided TTL or default 24 hours
         const expiresAt = ttl 
