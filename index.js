@@ -8,11 +8,16 @@ const {globalLimiter} = require('./middlewares/ratelimiter')
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
+const {connectMongoDB} = require('./connection')
 
+connectMongoDB(process.env.DB_URL)
 
 //Middlewares
 app.use(cors({ origin: "*", credentials: true })); 
 // app.use(cors({ origin: "http://your-frontend.com", credentials: true })); 
+app.use(express.json());
+// (Optional) if you also need form data
+app.use(express.urlencoded({ extended: true }));
 app.use(helmet()); 
 app.use(morgan("dev")); 
 app.use(globalLimiter);

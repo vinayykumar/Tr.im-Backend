@@ -27,8 +27,8 @@ const urlSchema = new mongoose.Schema({
 
 
 //Indexes
-urlSchema.index({shortID:1});
-urlSchema.index({expiresAt:1}, {expireAfterSeconds:0})
+// urlSchema.index({shortID:1});
+// urlSchema.index({expiresAt:1}, {expireAfterSeconds:0})
 
 //Model Creation
 const URL = mongoose.model('url',urlSchema)
