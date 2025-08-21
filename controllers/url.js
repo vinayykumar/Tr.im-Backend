@@ -45,7 +45,7 @@ async function handleGetOriginalUrl(req,res) {
     }
 }
 
-async function handleGetShortUrl(req,res) {
+async function handleGetShortUrlPrivate(req,res) {
     try {
         const { redirectedURL, ttl } = req.body; // optional TTL in hours
 
@@ -72,4 +72,30 @@ async function handleGetShortUrl(req,res) {
     }
 }
 
-module.exports = {handleMyUrls, handleGetOriginalUrl, handleGetShortUrl}
+async function handleGetShortUrlPublic(req,res) {
+        try {
+        const { redirectedURL, ttl } = req.body; // optional TTL in hours
+
+        // Generate a simple random short ID
+        const shortID = Math.random().toString(36).substring(2, 8);
+        
+        // Set expiry dynamically: either provided TTL or default 24 hours
+        const expiresAt = ttl 
+            ? new Date(Date.now() + ttl * 60 * 60 * 1000)
+            : new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+        const newURL = await URL.create({
+            shortID,
+            redirectedURL,
+            visitHistory: [],
+            expiresAt
+        });
+
+        res.json(newURL);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Could not create short URL" });
+    }
+}
+
+module.exports = {handleMyUrls, handleGetOriginalUrl, handleGetShortUrlPrivate, handleGetShortUrlPublic}

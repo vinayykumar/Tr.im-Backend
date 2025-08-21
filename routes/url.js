@@ -3,10 +3,13 @@ const router = express.Router();
 const authenticateToken = require("../middlewares/auth");
 const URL = require("../models/url");
 const {shortenLimiter} = require('../middlewares/ratelimiter')
-const {handleMyUrls, handleGetOriginalUrl, handleGetShortUrl} = require('../controllers/url')
+const {handleMyUrls, handleGetOriginalUrl, handleGetShortUrlPrivate, handleGetShortUrlPublic} = require('../controllers/url')
 
 // Protected route: create a short URL
-router.post("/shorten", shortenLimiter, authenticateToken, handleGetShortUrl);
+router.post("/shorten", shortenLimiter, authenticateToken, handleGetShortUrlPrivate);
+
+//Public route : create a short URL w/o login
+router.post('/shorten/public',handleGetShortUrlPublic)
 
 //Public route : get Redirected/Original URL
 router.get('/:shortID', handleGetOriginalUrl);
