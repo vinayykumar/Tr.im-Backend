@@ -21,7 +21,7 @@ router.post("/shorten", shortenLimiter, authenticateToken, async (req, res) => {
         const newURL = await URL.create({
             shortID,
             redirectedURL,
-            userId: req.user.id,
+            userID: req.user.id,
             visitHistory: [],
             expiresAt
         });
